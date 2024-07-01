@@ -1,0 +1,9 @@
+.vscode/
+node_modules/
+package-lock.json
+package.json
+script-Copie.js
+readme_start.md
+test.html
+img_RM/
+assets/
