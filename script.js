@@ -1,5 +1,6 @@
 let yearTag, crimeTag;
 let yearTag2, crimeTag2;
+let chart0;
 const data1 = {
   categories: [],
   series: [],
@@ -28,35 +29,51 @@ function setOptChart0(el, data) {
   };
   return (toastui.Chart.lineChart({ el, data, options }))
 }
+let counter=1;
 function DataTab() {
-  fetch(
-    "https://canvasjs.com/services/data/datapoints.php?xstart=1&ystart=10&length=10&type=json",{cache:"no-store",}
-  ).then(response => response.json())
-  .then(jsonData=>{
-    console.log(jsonData)
-    data0.series=[{name:'0',data:[]}];
-    for (let i = 0; i < jsonData.length; i++) {
+  fetch("https://canvasjs.com/services/data/datapoints.php?xstart=1&ystart=10&length=10&type=json", { cache: "no-store" })
+    .then(response => response.json())
+    .then(jsonData => {
+      if (!data0.series[0]) {
+        data0.series = [{ name: '0', data: [] }];
+      }
+   
+      for (let i = 0; i < jsonData.length; i++) {
         for (let n = 0; n < jsonData[i].length; n += 2) {
           if (n + 1 < jsonData[i].length) {
-            data0.series[0].data.push({
-              x:parseInt(jsonData[i][n]),
-              y:parseInt(jsonData[i][n + 1]),
+            data0.series[0].data.push({ 
+              x: counter,
+              y: parseInt(jsonData[i][n + 1]),
             });
           }
+         
+        }
+        counter++; 
+        }
+       
+      console.log(data0.series);
+      if (!chart0) {
+        const el0 = GetApiTab();
+        chart0 = setOptChart0(el0, data0);
+      } else {
+        chart0.setData(data0);
       }
-    }
-    console.log(data0)
-    console.log(data0.series[0].data)
-  }).then(chart0=>chart0=setOptChart0(el0, data0));
+      
+    });
 }
-function updateChart() {
-  const newData = DataTab();
-//   const el = GetApiTab();
-//   const data = data0;
+  DataTab();
+  setInterval(DataTab, 1000)
+ 
+// function updateChart() {
+  // const el0 = GetApiTab();
+  // chart0 = setOptChart0(el0, data0);
+ 
+  // const el = GetApiTab();
+  // const data = data0;
 //   const setNewData = setOptChart0(el, data);
-//   setNewData.setData(newData);
-}
-setInterval(updateChart, 1000)
+//   data0.addData(newData);
+// }
+// setInterval(updateChart, 1000)
 function GetDataTab() {
   let chartInsert = document.createElement("div");
   chartInsert.id = "chart-area1";
@@ -74,11 +91,6 @@ function GetDataTab() {
   yearTag2 = conteneur2.querySelectorAll("thead>tr>th:nth-child(n+3)");
   crimeTag = conteneur1.querySelectorAll("tbody>tr:nth-child(n+1)>td");
   crimeTag2 = conteneur2.querySelectorAll("tbody>tr>td");
-  // supbr = conteneur2.querySelector("tbody>tr:nth-child(8)>td:first-child");
-  // if (supbr.innerHTML.includes('<br')) {
-  //   supbr.innerHTML = supbr.innerHTML.replace(/<br\s*\/?>/gi, "");
-  //   supbr.textContent = supbr.textContent.replace(/\s+/g, ' ').trim();
-  // }
   return [el, el2];
 }
 function setOptChart1(el, data) {
@@ -146,7 +158,7 @@ function DataCrimeTab() {
   }
 }
 const [el1, el2] = GetDataTab();
-const el0 = GetApiTab();
+// const el0 = GetApiTab();
 // DataTab();
 DataYearTab();
 DataCrimeTab();
