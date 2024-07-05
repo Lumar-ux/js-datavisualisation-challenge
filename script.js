@@ -10,7 +10,6 @@ const data2 = {
   series: [],
 };
 const data0 = {
-  // categories: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22],
   series: [],
 };
 
@@ -25,7 +24,16 @@ function GetApiTab() {
 function setOptChart0(el, data) {
   const options = {
     chart: { width: 800, height: 911},
-    series: { shift: true },
+    xAxis: { 
+      title: 'X Axis',
+      pointOnColumn: false,
+      tickInterval: 1,
+    },
+    yAxis: {
+      title: 'Y Axis',
+    },
+    showDot: true,
+    responsive: true,
   };
   return (toastui.Chart.lineChart({ el, data, options }))
 }
@@ -37,7 +45,6 @@ function DataTab() {
       if (!data0.series[0]) {
         data0.series = [{ name: '0', data: [] }];
       }
-   
       for (let i = 0; i < jsonData.length; i++) {
         for (let n = 0; n < jsonData[i].length; n += 2) {
           if (n + 1 < jsonData[i].length) {
@@ -46,34 +53,20 @@ function DataTab() {
               y: parseInt(jsonData[i][n + 1]),
             });
           }
-         
         }
         counter++; 
-        }
-       
-      console.log(data0.series);
+      }
+      console.log(data0)
       if (!chart0) {
         const el0 = GetApiTab();
         chart0 = setOptChart0(el0, data0);
       } else {
         chart0.setData(data0);
       }
-      
     });
 }
-  DataTab();
-  setInterval(DataTab, 1000)
- 
-// function updateChart() {
-  // const el0 = GetApiTab();
-  // chart0 = setOptChart0(el0, data0);
- 
-  // const el = GetApiTab();
-  // const data = data0;
-//   const setNewData = setOptChart0(el, data);
-//   data0.addData(newData);
-// }
-// setInterval(updateChart, 1000)
+DataTab();
+setInterval(DataTab, 1000)
 function GetDataTab() {
   let chartInsert = document.createElement("div");
   chartInsert.id = "chart-area1";
