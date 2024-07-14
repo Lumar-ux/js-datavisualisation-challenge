@@ -16,67 +16,76 @@ const data0 = {
 function GetApiTab() {
   let chartInsertChart1 = document.createElement("div");
   chartInsertChart1.id = "chart-area0";
-  const conteneur= document.getElementById("firstHeading");
+  const conteneur = document.getElementById("firstHeading");
   conteneur.insertAdjacentElement("afterend", chartInsertChart1);
   const el3 = document.getElementById("chart-area0");
-  return (el3);
+  return el3;
 }
 function setOptChart0(el, data) {
   const options = {
-    chart: { width: 800, height: 911},
-    xAxis: { 
-      title: 'X Axis',
+    chart: { width: 800, height: 911 },
+    xAxis: {
+      title: "X Axis",
       pointOnColumn: false,
       tickInterval: 1,
     },
     yAxis: {
-      title: 'Y Axis',
+      title: "Y Axis",
     },
     showDot: true,
     responsive: true,
   };
-  return (toastui.Chart.lineChart({ el, data, options }))
+  return toastui.Chart.lineChart({ el, data, options });
 }
-let counter=1;
+let counter = 1;
+let Init = false;
 function DataTab() {
-  fetch("https://canvasjs.com/services/data/datapoints.php?xstart=1&ystart=10&length=10&type=json", { cache: "no-store" })
-    .then(response => response.json())
-    .then(jsonData => {
+  const url = Init
+    ? "https://canvasjs.com/services/data/datapoints.php?xstart=1&ystart=10&length=1&type=json"
+    : "https://canvasjs.com/services/data/datapoints.php?xstart=1&ystart=10&length=10&type=json";
+  fetch(url, { cache: "no-store" })
+    .then((response) => response.json())
+    .then((jsonData) => {
       if (!data0.series[0]) {
-        data0.series = [{ name: '0', data: [] }];
+        data0.series = [{ name: "Nb Crime", data: [] }];
       }
-      for (let i = 0; i < jsonData.length; i++) {
-        for (let n = 0; n < jsonData[i].length; n += 2) {
-          if (n + 1 < jsonData[i].length) {
-            data0.series[0].data.push({ 
-              x: counter,
-              y: parseInt(jsonData[i][n + 1]),
-            });
-          }
+      if (!Init) {
+        for (let i = 0; i < jsonData.length; i++) {
+          data0.series[0].data.push({
+            x: counter,
+            y: parseInt(jsonData[i][1]),
+          });
+          counter++;
         }
-        counter++; 
+        Init = true;
+      } else {
+        data0.series[0].data.push({
+          x: counter,
+          y: parseInt(jsonData[0][1]),
+        });
+        counter++;
       }
-      console.log(data0)
       if (!chart0) {
         const el0 = GetApiTab();
         chart0 = setOptChart0(el0, data0);
       } else {
         chart0.setData(data0);
       }
+      console.log(data0.series);
     });
 }
 DataTab();
-setInterval(DataTab, 1000)
+setInterval(DataTab, 5000);
 function GetDataTab() {
   let chartInsert = document.createElement("div");
   chartInsert.id = "chart-area1";
   const conteneur1 = document.getElementById("table1");
-  conteneur1.insertAdjacentElement("afterend", chartInsert);
+  conteneur1.insertAdjacentElement("beforebegin", chartInsert);
   const el = document.getElementById("chart-area1");
   let chartInsert2 = document.createElement("div");
   chartInsert2.id = "chart-area2";
   const conteneur2 = document.getElementById("table2");
-  conteneur2.insertAdjacentElement("afterend", chartInsert2);
+  conteneur2.insertAdjacentElement("beforebegin", chartInsert2);
   const el2 = document.getElementById("chart-area2");
   yearTag = conteneur1.querySelectorAll(
     "tbody>tr:first-child>th:nth-child(n+3)"
@@ -89,14 +98,64 @@ function GetDataTab() {
 function setOptChart1(el, data) {
   const options = {
     chart: { width: 800, height: 3500 },
-    series: { shift: true },
+    series: {
+      shift: true,
+      selectable: true,
+    },
+    yAxis: {
+      categorySpacing: 10,
+    },
+    theme: {
+      series: {
+        barWidth: 8,
+        hover: {
+          color: "#00ff00",
+          borderColor: "#73C8E7",
+          borderWidth: 3,
+          shadowColor: "rgba(0, 0, 0, 0.7)",
+          shadowOffsetX: 4,
+          shadowOffsetY: 4,
+          shadowBlur: 6,
+        },
+      },
+    },
   };
   return toastui.Chart.barChart({ el, data, options });
 }
 function setOptChart2(el, data) {
   const options = {
     chart: { width: 800, height: 911 },
-    series: { shift: true },
+    series: {
+      shift: true,
+      selectable: true,
+      zoomable: true,
+      dot: {
+        radius: 15,
+      },
+      // dataLabels: { visible: true, offsetY: -10 }
+    },
+    plot: {
+      hover: {
+        cursor: "pointer", // Changer le curseur en pointeur
+      },
+    },
+    theme: {
+      series: {
+        dataLabels: {
+          fontFamily: "monaco",
+          useSeriesColor: true,
+          textBubble: {
+            visible: true,
+            arrow: {
+              visible: true,
+              width: 5,
+              height: 5,
+              direction: "bottom",
+            },
+          },
+        },
+      },
+    },
   };
   return toastui.Chart.areaChart({ el, data, options });
 }
