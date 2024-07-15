@@ -75,7 +75,7 @@ function DataTab() {
     });
 }
 DataTab();
-setInterval(DataTab, 5000);
+setInterval(DataTab, 1000);
 function GetDataTab() {
   let chartInsert = document.createElement("div");
   chartInsert.id = "chart-area1";
